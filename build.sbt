@@ -1,6 +1,8 @@
 ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "2.13.8"
 
+val IntegrationTest = config("it") extend Test
+
 lazy val root = (project in file("."))
   .settings(
     name := "traffic",
@@ -14,3 +16,5 @@ lazy val root = (project in file("."))
       "org.scalamock" %% "scalamock"            % "5.2.0"  % "test"
     )
   )
+  .settings(Defaults.itSettings: _*)
+  .configs(IntegrationTest)

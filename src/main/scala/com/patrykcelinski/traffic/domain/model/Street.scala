@@ -1,6 +1,9 @@
 package com.patrykcelinski.traffic.domain.model
 
-case class Street private (id: Int) extends AnyVal
+case class Street private (id: Int) extends AnyVal {
+  override def toString: String =
+    id.toString
+}
 
 object Street {
   def fromString(str: String): Option[Street] =

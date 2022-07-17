@@ -11,10 +11,8 @@ object OptimalPath {
   def calculate(
       startingIntersection: Intersection,
       endingIntersection: Intersection,
-      measurements: Measurements
+      routeTransitTimes: List[RouteTransitTime]
   ): OptimalPath = {
-    val routeTransitTimes               =
-      measurements.getRoutesTransitTimes()
     val averageIntersectionTransitTimes =
       routeTransitTimes
         .groupBy(_.route)
@@ -25,7 +23,8 @@ object OptimalPath {
           )
         }
 
-    // TODO: For time being it is dummy data
+    // TODO :convert to graph and find path
+
     OptimalPath(
       startingIntersection,
       endingIntersection,

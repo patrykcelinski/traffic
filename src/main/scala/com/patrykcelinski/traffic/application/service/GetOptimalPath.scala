@@ -38,7 +38,7 @@ object GetOptimalPath {
                                  .calculate(
                                    query.startingIntersection,
                                    query.endingIntersection,
-                                   measurements
+                                   measurements.getRoutesTransitTimes()
                                  )
                                  .asRight
                            }

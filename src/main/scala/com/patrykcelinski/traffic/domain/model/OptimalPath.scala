@@ -37,7 +37,7 @@ object OptimalPath {
           Edge(
             from = averageTransitTime.start.value,
             to = averageTransitTime.end.value,
-            cost = PathCost(averageTransitTime.transitTime)
+            cost = PathCost(averageTransitTime.transitTime.value)
           )
         )
         .groupBy(_.from)

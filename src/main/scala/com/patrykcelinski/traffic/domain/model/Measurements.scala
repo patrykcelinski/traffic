@@ -10,7 +10,7 @@ case class Measurements(
           case TransitMeasurement(
                 startAvenue: Avenue,
                 startStreet: Street,
-                transitTime: Double,
+                transitTime: Seconds,
                 endAvenue: Avenue,
                 endStreet: Street
               ) =>

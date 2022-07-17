@@ -1,6 +1,6 @@
 package com.patrykcelinski.traffic.domain.model
 
-case class Street (id: Int) extends AnyVal {
+case class Street(id: Int) extends AnyVal {
   override def toString: String =
     id.toString
 }

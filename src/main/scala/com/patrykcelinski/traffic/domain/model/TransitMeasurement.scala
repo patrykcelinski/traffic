@@ -3,7 +3,7 @@ package com.patrykcelinski.traffic.domain.model
 case class TransitMeasurement(
     startAvenue: Avenue,
     startStreet: Street,
-    transitTime: Double,
+    transitTime: Seconds,
     endAvenue: Avenue,
     endStreet: Street
 )

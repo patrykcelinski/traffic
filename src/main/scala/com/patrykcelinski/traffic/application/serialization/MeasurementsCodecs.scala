@@ -3,7 +3,7 @@ import cats.implicits._
 import com.patrykcelinski.traffic.domain.model._
 import io.circe.Decoder
 import io.circe.generic.semiauto._
-
+import io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
 object MeasurementsCodecs {
 
   implicit val avenueDecoder: Decoder[Avenue] = Decoder.decodeChar.map(
@@ -16,6 +16,8 @@ object MeasurementsCodecs {
         s"Invalid Street format: $stringInt"
       )
     )
+
+  implicit val secondsDecodes: Decoder[Seconds] = deriveUnwrappedDecoder
 
   implicit val transitMeasurementDecoder: Decoder[TransitMeasurement] =
     deriveDecoder

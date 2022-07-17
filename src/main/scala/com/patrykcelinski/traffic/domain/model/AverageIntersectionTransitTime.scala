@@ -2,7 +2,7 @@ package com.patrykcelinski.traffic.domain.model
 
 case class AverageIntersectionTransitTime private (
     start: IntersectionKey,
-    transitTime: Double,
+    transitTime: Seconds,
     end: IntersectionKey
 ) {
   override def toString: String =
@@ -16,7 +16,7 @@ object AverageIntersectionTransitTime {
   ): AverageIntersectionTransitTime =
     AverageIntersectionTransitTime(
       route.start,
-      transitTimes.map(_.transitTime).sum / transitTimes.length,
+      Seconds(transitTimes.map(_.transitTime.value).sum / transitTimes.length),
       route.end
     )
 }

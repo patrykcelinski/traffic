@@ -8,16 +8,16 @@ import com.patrykcelinski.traffic.domain.model.graph.{
 }
 
 case class OptimalPath(
-    startingIntersection: IntersectionKey,
-    endingIntersection: IntersectionKey,
-    path: List[IntersectionKey],
+    startingIntersection: Intersection,
+    endingIntersection: Intersection,
+    path: List[Intersection],
     totalTransitTime: TotalCost
 )
 
 object OptimalPath {
   def calculate(
-      startingIntersection: IntersectionKey,
-      endingIntersection: IntersectionKey,
+      startingIntersection: Intersection,
+      endingIntersection: Intersection,
       routeTransitTimes: List[RouteTransitTime]
   ): Either[PathfindingError, OptimalPath] = {
 
@@ -31,12 +31,12 @@ object OptimalPath {
           )
         }
 
-    val graphMap: Map[String, Set[Edge[String]]] =
+    val graphMap: Map[Intersection, Set[Edge[Intersection]]] =
       averageIntersectionTransitTimes
         .map(averageTransitTime =>
           Edge(
-            from = averageTransitTime.start.value,
-            to = averageTransitTime.end.value,
+            from = averageTransitTime.start,
+            to = averageTransitTime.end,
             cost = PathCost(averageTransitTime.transitTime.value)
           )
         )
@@ -46,15 +46,14 @@ object OptimalPath {
         }
 
     new Graph(graphMap)
-      .findPath(startingIntersection.value, endingIntersection.value)
-      .map { path =>
+      .findPath(startingIntersection, endingIntersection)
+      .map { optimalPath =>
         OptimalPath(
           startingIntersection,
           endingIntersection,
-          path = path.path.flatMap(IntersectionKey.fromString),
-          totalTransitTime = path.totalCost
+          path = optimalPath.path,
+          totalTransitTime = optimalPath.totalCost
         )
       }
-
   }
 }

@@ -2,7 +2,7 @@ package com.patrykcelinski.traffic.application.input
 
 import cats.implicits._
 import com.patrykcelinski.traffic.application.error.InvalidInputError
-import com.patrykcelinski.traffic.domain.model.{Avenue, IntersectionKey, Street}
+import com.patrykcelinski.traffic.domain.model.{Avenue, Intersection, Street}
 import com.patrykcelinski.traffic.testutils.FlatTest
 
 import java.nio.file.Path
@@ -15,11 +15,11 @@ class FindOptimalPathQueryTest extends FlatTest {
       args = List(path, "A1", "A2")
     ) shouldBe FindOptimalPathQuery(
       measurementsFilePath = Path.of(path),
-      startingIntersection = IntersectionKey.make(
+      startingIntersection = Intersection(
         Avenue('A'),
         Street(1)
       ),
-      endingIntersection = IntersectionKey.make(
+      endingIntersection = Intersection(
         Avenue('A'),
         Street(2)
       )
@@ -32,11 +32,11 @@ class FindOptimalPathQueryTest extends FlatTest {
       args = List(path, "Z13", "A222")
     ) shouldBe FindOptimalPathQuery(
       measurementsFilePath = Path.of(path),
-      startingIntersection = IntersectionKey.make(
+      startingIntersection = Intersection(
         Avenue('Z'),
         Street(13)
       ),
-      endingIntersection = IntersectionKey.make(
+      endingIntersection = Intersection(
         Avenue('A'),
         Street(222)
       )

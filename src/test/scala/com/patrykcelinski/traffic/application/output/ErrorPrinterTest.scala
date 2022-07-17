@@ -7,7 +7,7 @@ import com.patrykcelinski.traffic.application.error.{
   InvalidInputError,
   TrafficAppError
 }
-import com.patrykcelinski.traffic.domain.model.IntersectionKey
+import com.patrykcelinski.traffic.domain.model.Intersection
 import com.patrykcelinski.traffic.testutils.FlatTest
 
 import java.nio.charset.Charset
@@ -75,8 +75,8 @@ class ErrorPrinterTest extends FlatTest {
         printed = str.some
       }
     implicit val console: Console[Id] = spyConsoleError(spy)
-    val start                         = IntersectionKey("A1")
-    val end                           = IntersectionKey("A2")
+    val start                         = Intersection.fromString("A1").get
+    val end                           = Intersection.fromString("A2").get
     ErrorPrinter
       .print(
         TrafficAppError.ThereIsNoPathBetween(start, end)
@@ -92,7 +92,7 @@ class ErrorPrinterTest extends FlatTest {
         printed = str.some
       }
     implicit val console: Console[Id] = spyConsoleError(spy)
-    val start                         = IntersectionKey("A1")
+    val start                         = Intersection.fromString("A1").get
     ErrorPrinter
       .print(
         TrafficAppError.IntersectionDoesNotExit(start)

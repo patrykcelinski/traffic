@@ -2,15 +2,15 @@ package com.patrykcelinski.traffic.application.input
 
 import cats.implicits._
 import com.patrykcelinski.traffic.application.error.InvalidInputError
-import com.patrykcelinski.traffic.domain.model.IntersectionKey
+import com.patrykcelinski.traffic.domain.model.Intersection
 
 import java.nio.file.{Path, Paths}
 import scala.util.Try
 
 case class FindOptimalPathQuery private (
     measurementsFilePath: Path,
-    startingIntersection: IntersectionKey,
-    endingIntersection: IntersectionKey
+    startingIntersection: Intersection,
+    endingIntersection: Intersection
 )
 
 object FindOptimalPathQuery {
@@ -44,9 +44,9 @@ object FindOptimalPathQuery {
 
   private def validateIntersection(
       intersectionString: String
-  ): Either[InvalidInputError.InvalidIntersection, IntersectionKey] =
+  ): Either[InvalidInputError.InvalidIntersection, Intersection] =
     Either.fromOption(
-      IntersectionKey.fromString(intersectionString),
+      Intersection.fromString(intersectionString),
       InvalidInputError.InvalidIntersection(intersectionString)
     )
 }

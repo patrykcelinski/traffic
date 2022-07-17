@@ -1,15 +1,15 @@
 package com.patrykcelinski.traffic.application.error
 
-import com.patrykcelinski.traffic.domain.model.IntersectionKey
+import com.patrykcelinski.traffic.domain.model.Intersection
 
 import java.nio.file.Path
 
 sealed trait TrafficAppError extends Product with Serializable
 
 object TrafficAppError {
-  case class IntersectionDoesNotExit(intersectionKey: IntersectionKey)
+  case class IntersectionDoesNotExit(intersection: Intersection)
       extends TrafficAppError
-  case class ThereIsNoPathBetween(start: IntersectionKey, end: IntersectionKey)
+  case class ThereIsNoPathBetween(start: Intersection, end: Intersection)
       extends TrafficAppError
 }
 

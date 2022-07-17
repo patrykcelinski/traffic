@@ -34,7 +34,7 @@ object ErrorPrinter {
       case TrafficAppError.IntersectionDoesNotExit(key)             =>
         Console[F]
           .errorln(
-            s"ERROR. Given intersection ${key.value} does not exist"
+            s"ERROR. Given intersection ${key.toString} does not exist"
           )
       case InvalidInputError.FileIsInWrongFormat                    =>
         Console[F]

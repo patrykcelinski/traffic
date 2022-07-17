@@ -1,6 +1,6 @@
 package com.patrykcelinski.traffic.domain.model.graph
 import cats.implicits._
-import com.patrykcelinski.traffic.domain.model.graph.cost.{PathCost, TotalCost}
+import com.patrykcelinski.traffic.domain.model.graph.cost.{HeuristicFunctionCost, PathCost, TotalCost}
 import com.patrykcelinski.traffic.testutils.FlatTest
 
 class GraphTest extends FlatTest {
@@ -350,7 +350,23 @@ class GraphTest extends FlatTest {
         )
       )
     )
-    exampleGraph.findPath("S", "E") shouldBe Path(
+    val heuristics = Map(
+      "S" -> 10.0,
+      "A" -> 9.0,
+      "B" -> 7.0,
+      "C" -> 8.0,
+      "D" -> 9.0,
+      "E" -> 0.0,
+      "F" -> 6.0,
+      "G" -> 3.0,
+      "H" -> 6.0,
+      "I" -> 4.0,
+      "J" -> 4.0,
+      "K" -> 3.0
+    )
+    val heuristicFunction =
+      (x: String, _: String) => HeuristicFunctionCost(heuristics(x))
+    exampleGraph.findPath("S", "E", heuristicFunction) shouldBe Path(
       totalCost = TotalCost(2 + 1 + 2 + 2),
       path = List("S", "B", "H", "G", "E")
     ).asRight

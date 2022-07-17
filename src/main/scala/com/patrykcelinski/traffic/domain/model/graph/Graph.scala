@@ -80,15 +80,15 @@ class Graph[T](graph: Map[T, Set[Edge[T]]]) {
       }
 
     if (!graph.contains(start))
-      NotExistingNode(start).asLeft
+      PathfindingError.NotExistingStartingNode.asLeft
     else if (!graph.contains(end))
-      NotExistingNode(end).asLeft
+      PathfindingError.NotExistingEndingNode.asLeft
     else if (this.inDegree(end) >= 1)
       findPathTailrec(
         List(Node(start, TotalCost.ZERO, None)),
         Set.empty
       ).asRight
     else
-      NoPath.asLeft
+      PathfindingError.NoPath.asLeft
   }
 }

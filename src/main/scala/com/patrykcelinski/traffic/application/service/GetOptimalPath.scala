@@ -1,6 +1,9 @@
 package com.patrykcelinski.traffic.application.service
 import cats.Monad
-import com.patrykcelinski.traffic.application.error.InvalidInputError
+import com.patrykcelinski.traffic.application.error.{
+  InvalidInputError,
+  TrafficAppError
+}
 import com.patrykcelinski.traffic.application.input.FindOptimalPathQuery
 import com.patrykcelinski.traffic.domain.model.{
   AverageIntersectionTransitTime,
@@ -9,12 +12,13 @@ import com.patrykcelinski.traffic.domain.model.{
 import cats.implicits._
 import cats.effect._
 import com.patrykcelinski.traffic.application.output.OptimalPathPrinter
+import com.patrykcelinski.traffic.domain.model.graph.PathfindingError
 import com.patrykcelinski.traffic.domain.repository.ReadMeasurementsRepository
 
 trait GetOptimalPath[F[_]] {
   def apply(
       query: FindOptimalPathQuery
-  ): F[Either[InvalidInputError, OptimalPath]]
+  ): F[Either[TrafficAppError, OptimalPath]]
 }
 
 object GetOptimalPath {
@@ -22,7 +26,8 @@ object GetOptimalPath {
       readMeasurementsRepository: ReadMeasurementsRepository[F]
   ): GetOptimalPath[F] = (
     query: FindOptimalPathQuery
-  ) =>
+  ) => {
+
     for {
       maybeMeasurements <-
         readMeasurementsRepository.getMeasurements(query.measurementsFilePath)
@@ -39,9 +44,33 @@ object GetOptimalPath {
                                    query.startingIntersection,
                                    query.endingIntersection,
                                    measurements.getRoutesTransitTimes()
-                                 )
-                                 .asRight
+                                 ) match {
+                                 case Left(error)  =>
+                                   error match {
+                                     case PathfindingError.NoPath                  =>
+                                       TrafficAppError
+                                         .ThereIsNoPathBetween(
+                                           query.startingIntersection,
+                                           query.endingIntersection
+                                         )
+                                         .asLeft
+                                     case PathfindingError.NotExistingStartingNode =>
+                                       TrafficAppError
+                                         .IntersectionDoesNotExit(
+                                           query.startingIntersection
+                                         )
+                                         .asLeft
+                                     case PathfindingError.NotExistingEndingNode   =>
+                                       TrafficAppError
+                                         .IntersectionDoesNotExit(
+                                           query.endingIntersection
+                                         )
+                                         .asLeft
+                                   }
+                                 case Right(value) => value.asRight
+                               }
                            }
     } yield output
+  }
 
 }

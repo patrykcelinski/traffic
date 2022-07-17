@@ -7,7 +7,7 @@ import com.patrykcelinski.traffic.application.input.FindOptimalPathQuery
 import com.patrykcelinski.traffic.domain.model.{
   Avenue,
   AverageIntersectionTransitTime,
-  Intersection,
+  IntersectionKey,
   OptimalPath,
   Route,
   RouteTransitTime,

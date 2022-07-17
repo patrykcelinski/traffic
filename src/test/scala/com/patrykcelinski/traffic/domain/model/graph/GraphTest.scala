@@ -18,7 +18,10 @@ class GraphTest extends FlatTest {
         "A2" -> Set.empty
       )
     )
-    twoNodeGraph.findPath("A3", "A2") shouldBe NotExistingNode("A3").asLeft
+    twoNodeGraph.findPath(
+      "A3",
+      "A2"
+    ) shouldBe PathfindingError.NotExistingStartingNode.asLeft
   }
 
   /*
@@ -34,7 +37,10 @@ class GraphTest extends FlatTest {
         "A2" -> Set.empty
       )
     )
-    twoNodeGraph.findPath("A1", "A3") shouldBe NotExistingNode("A3").asLeft
+    twoNodeGraph.findPath(
+      "A1",
+      "A3"
+    ) shouldBe PathfindingError.NotExistingEndingNode.asLeft
   }
 
   /*
@@ -47,7 +53,7 @@ class GraphTest extends FlatTest {
         "A2" -> Set.empty
       )
     )
-    oneNodeGraph.findPath("A1", "A2") shouldBe NoPath.asLeft
+    oneNodeGraph.findPath("A1", "A2") shouldBe PathfindingError.NoPath.asLeft
   }
 
   /*

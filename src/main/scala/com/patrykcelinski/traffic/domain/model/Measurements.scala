@@ -16,8 +16,8 @@ case class Measurements(
               ) =>
             RouteTransitTime(
               Route(
-                Intersection(startAvenue, startStreet),
-                Intersection(endAvenue, endStreet)
+                IntersectionKey.make(startAvenue, startStreet),
+                IntersectionKey.make(endAvenue, endStreet)
               ),
               transitTime
             )

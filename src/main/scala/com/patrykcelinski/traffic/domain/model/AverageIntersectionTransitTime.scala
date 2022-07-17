@@ -1,9 +1,9 @@
 package com.patrykcelinski.traffic.domain.model
 
 case class AverageIntersectionTransitTime private (
-    start: Intersection,
+    start: IntersectionKey,
     transitTime: Double,
-    end: Intersection
+    end: IntersectionKey
 ) {
   override def toString: String =
     s"$start>$end:$transitTime"

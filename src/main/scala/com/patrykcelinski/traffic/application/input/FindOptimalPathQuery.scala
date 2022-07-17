@@ -4,7 +4,6 @@ import cats.implicits._
 import com.patrykcelinski.traffic.application.error.InvalidInputError
 import com.patrykcelinski.traffic.domain.model.IntersectionKey
 
-import java.io.File
 import java.nio.file.{Path, Paths}
 import scala.util.Try
 

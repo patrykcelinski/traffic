@@ -1,7 +1,5 @@
 package com.patrykcelinski.traffic.domain.model.graph.cost
 
-import com.patrykcelinski.traffic.domain.model.graph.{cost, Edge}
-
 case class TotalCost(value: Double) extends AnyVal {
   def add(pathCost: PathCost): TotalCost                           =
     TotalCost(value + pathCost.value)

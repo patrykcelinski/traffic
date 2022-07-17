@@ -1,6 +1,5 @@
 package com.patrykcelinski.traffic.application.output
 
-import cats.effect.{ExitCode, IO}
 import cats.effect.std.Console
 import com.patrykcelinski.traffic.application.error.{
   InvalidInputError,
@@ -36,6 +35,11 @@ object ErrorPrinter {
         Console[F]
           .errorln(
             s"ERROR. Given intersection ${key.value} does not exist"
+          )
+      case InvalidInputError.FileIsInWrongFormat                    =>
+        Console[F]
+          .errorln(
+            s"ERROR. Data file is in the wrong format."
           )
     }
 }

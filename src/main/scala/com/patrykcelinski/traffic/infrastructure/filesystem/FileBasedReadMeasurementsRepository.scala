@@ -7,7 +7,7 @@ import com.patrykcelinski.traffic.domain.model.Measurements
 import com.patrykcelinski.traffic.domain.repository.ReadMeasurementsRepository
 import io.circe.parser.decode
 
-import java.io.{File, FileInputStream, FileNotFoundException}
+import java.io.{File, FileNotFoundException}
 import java.nio.file.Path
 import scala.io.Source
 

@@ -1,6 +1,5 @@
 package com.patrykcelinski.traffic.domain.model
 
-import com.patrykcelinski.traffic.application.error.InvalidInputError
 import com.patrykcelinski.traffic.testutils.FlatTest
 
 class IntersectionKeyTest extends FlatTest {

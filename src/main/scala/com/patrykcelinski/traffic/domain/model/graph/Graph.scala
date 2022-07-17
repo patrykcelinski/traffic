@@ -3,7 +3,6 @@ package com.patrykcelinski.traffic.domain.model.graph
 import cats.implicits._
 import com.patrykcelinski.traffic.domain.model.graph.cost.{
   HeuristicFunctionCost,
-  PathCost,
   TotalCost
 }
 

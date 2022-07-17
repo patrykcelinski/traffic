@@ -5,14 +5,8 @@ import com.patrykcelinski.traffic.application.error.{
   TrafficAppError
 }
 import com.patrykcelinski.traffic.application.input.FindOptimalPathQuery
-import com.patrykcelinski.traffic.domain.model.{
-  AverageIntersectionTransitTime,
-  OptimalPath
-}
+import com.patrykcelinski.traffic.domain.model.{Measurements, OptimalPath}
 import cats.implicits._
-import cats.effect._
-import com.patrykcelinski.traffic.application.error.InvalidInputError.NotExistingMeasurementsDataFilePath
-import com.patrykcelinski.traffic.application.output.OptimalPathPrinter
 import com.patrykcelinski.traffic.domain.model.graph.PathfindingError
 import com.patrykcelinski.traffic.domain.repository.ReadMeasurementsRepository
 
@@ -29,47 +23,53 @@ object GetOptimalPath {
     query: FindOptimalPathQuery
   ) => {
 
+    def mapPathfindingErrorToTrafficAppError(
+        error: PathfindingError
+    ): Either[TrafficAppError, OptimalPath] =
+      error match {
+        case PathfindingError.NoPath                  =>
+          TrafficAppError
+            .ThereIsNoPathBetween(
+              query.startingIntersection,
+              query.endingIntersection
+            )
+            .asLeft
+        case PathfindingError.NotExistingStartingNode =>
+          TrafficAppError
+            .IntersectionDoesNotExit(
+              query.startingIntersection
+            )
+            .asLeft
+        case PathfindingError.NotExistingEndingNode   =>
+          TrafficAppError
+            .IntersectionDoesNotExit(
+              query.endingIntersection
+            )
+            .asLeft
+      }
+
+    def getPath(
+        measurements: Measurements
+    ): Either[TrafficAppError, OptimalPath] =
+      OptimalPath
+        .calculate(
+          query.startingIntersection,
+          query.endingIntersection,
+          measurements.getRoutesTransitTimes()
+        ) match {
+        case Left(error)  =>
+          mapPathfindingErrorToTrafficAppError(error)
+        case Right(value) => value.asRight
+      }
+
     for {
       maybeMeasurements <-
         readMeasurementsRepository.getMeasurements(query.measurementsFilePath)
       output             = maybeMeasurements match {
-                             case Left(
-                                   error: InvalidInputError.NotExistingMeasurementsDataFilePath
-                                 ) =>
+                             case Left(error: InvalidInputError) =>
                                error.asLeft
-                             case Left(error: InvalidInputError.FileIsInWrongFormat.type) =>
-                               error.asLeft
-                             case Right(measurements)                                     =>
-                               OptimalPath
-                                 .calculate(
-                                   query.startingIntersection,
-                                   query.endingIntersection,
-                                   measurements.getRoutesTransitTimes()
-                                 ) match {
-                                 case Left(error)  =>
-                                   error match {
-                                     case PathfindingError.NoPath                  =>
-                                       TrafficAppError
-                                         .ThereIsNoPathBetween(
-                                           query.startingIntersection,
-                                           query.endingIntersection
-                                         )
-                                         .asLeft
-                                     case PathfindingError.NotExistingStartingNode =>
-                                       TrafficAppError
-                                         .IntersectionDoesNotExit(
-                                           query.startingIntersection
-                                         )
-                                         .asLeft
-                                     case PathfindingError.NotExistingEndingNode   =>
-                                       TrafficAppError
-                                         .IntersectionDoesNotExit(
-                                           query.endingIntersection
-                                         )
-                                         .asLeft
-                                   }
-                                 case Right(value) => value.asRight
-                               }
+                             case Right(measurements)            =>
+                               getPath(measurements)
                            }
     } yield output
   }

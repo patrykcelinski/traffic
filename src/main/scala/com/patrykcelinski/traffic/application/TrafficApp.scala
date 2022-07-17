@@ -1,28 +1,13 @@
 package com.patrykcelinski.traffic.application
 
-import cats.implicits._
 import cats.effect._
-import cats.data._
 import com.patrykcelinski.traffic.application.input.FindOptimalPathQuery
-import com.patrykcelinski.traffic.domain.model.{
-  Avenue,
-  AverageIntersectionTransitTime,
-  IntersectionKey,
-  OptimalPath,
-  Route,
-  RouteTransitTime,
-  Street,
-  TransitMeasurement
-}
 import com.patrykcelinski.traffic.domain.repository.ReadMeasurementsRepository
 import cats.effect.std.Console
-import com.patrykcelinski.traffic.application.error.InvalidInputError
 import com.patrykcelinski.traffic.application.output.{
   ErrorPrinter,
   OptimalPathPrinter
 }
-import cats.effect.std.Console
-import cats.syntax.all._
 import com.patrykcelinski.traffic.application.service.GetOptimalPath
 import com.patrykcelinski.traffic.infrastructure.filesystem.FileBasedReadMeasurementsRepository
 

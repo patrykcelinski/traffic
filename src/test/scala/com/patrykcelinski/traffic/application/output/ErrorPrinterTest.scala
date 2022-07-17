@@ -101,6 +101,21 @@ class ErrorPrinterTest extends FlatTest {
     printed.get shouldBe s"ERROR. Given intersection $start does not exist"
   }
 
+  it should "print message to the console in case of TrafficAppError.FileIsInWrongFormat" in {
+    var printed                       = none[String]
+    val spy                           = (str: String) =>
+      Id {
+        printed = str.some
+      }
+    implicit val console: Console[Id] = spyConsoleError(spy)
+    ErrorPrinter
+      .print(
+        InvalidInputError.FileIsInWrongFormat
+      )
+
+    printed.get shouldBe s"ERROR. Data file is in the wrong format."
+  }
+
   def spyConsoleError[A](spy: String => Id[Unit]): Console[Id] =
     new Console[Id] {
       override def readLineWithCharset(charset: Charset): Id[String] = ???

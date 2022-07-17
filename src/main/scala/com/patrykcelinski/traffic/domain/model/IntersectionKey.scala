@@ -1,7 +1,9 @@
 package com.patrykcelinski.traffic.domain.model
 import cats.implicits._
 
-case class IntersectionKey private (value: String) extends AnyVal
+case class IntersectionKey private (value: String) extends AnyVal {
+  override def toString: String = value
+}
 
 object IntersectionKey {
 

@@ -3,7 +3,11 @@ package com.patrykcelinski.traffic.application.output
 import cats.{Id, Show}
 import cats.implicits._
 import cats.effect.std.Console
-import com.patrykcelinski.traffic.application.error.InvalidInputError
+import com.patrykcelinski.traffic.application.error.{
+  InvalidInputError,
+  TrafficAppError
+}
+import com.patrykcelinski.traffic.domain.model.IntersectionKey
 import com.patrykcelinski.traffic.testutils.FlatTest
 
 import java.nio.charset.Charset
@@ -62,6 +66,39 @@ class ErrorPrinterTest extends FlatTest {
       )
 
     printed.get shouldBe s"Measurements data file does not exit: ${notExistingMeasurementsDataFilePath.toString}"
+  }
+
+  it should "print message to the console in case of TrafficAppError.ThereIsNoPathBetween" in {
+    var printed                       = none[String]
+    val spy                           = (str: String) =>
+      Id {
+        printed = str.some
+      }
+    implicit val console: Console[Id] = spyConsoleError(spy)
+    val start                         = IntersectionKey("A1")
+    val end                           = IntersectionKey("A2")
+    ErrorPrinter
+      .print(
+        TrafficAppError.ThereIsNoPathBetween(start, end)
+      )
+
+    printed.get shouldBe s"There is no path connecting $start and $end"
+  }
+
+  it should "print message to the console in case of TrafficAppError.IntersectionDoesNotExit" in {
+    var printed                       = none[String]
+    val spy                           = (str: String) =>
+      Id {
+        printed = str.some
+      }
+    implicit val console: Console[Id] = spyConsoleError(spy)
+    val start                         = IntersectionKey("A1")
+    ErrorPrinter
+      .print(
+        TrafficAppError.IntersectionDoesNotExit(start)
+      )
+
+    printed.get shouldBe s"Given intersection $start does not exist"
   }
 
   def spyConsoleError[A](spy: String => Id[Unit]): Console[Id] =

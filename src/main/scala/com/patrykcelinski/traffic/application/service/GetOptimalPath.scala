@@ -11,6 +11,7 @@ import com.patrykcelinski.traffic.domain.model.{
 }
 import cats.implicits._
 import cats.effect._
+import com.patrykcelinski.traffic.application.error.InvalidInputError.NotExistingMeasurementsDataFilePath
 import com.patrykcelinski.traffic.application.output.OptimalPathPrinter
 import com.patrykcelinski.traffic.domain.model.graph.PathfindingError
 import com.patrykcelinski.traffic.domain.repository.ReadMeasurementsRepository
@@ -32,13 +33,13 @@ object GetOptimalPath {
       maybeMeasurements <-
         readMeasurementsRepository.getMeasurements(query.measurementsFilePath)
       output             = maybeMeasurements match {
-                             case None               =>
-                               InvalidInputError
-                                 .NotExistingMeasurementsDataFilePath(
-                                   query.measurementsFilePath
-                                 )
-                                 .asLeft
-                             case Some(measurements) =>
+                             case Left(
+                                   error: InvalidInputError.NotExistingMeasurementsDataFilePath
+                                 ) =>
+                               error.asLeft
+                             case Left(error: InvalidInputError.FileIsInWrongFormat.type) =>
+                               error.asLeft
+                             case Right(measurements)                                     =>
                                OptimalPath
                                  .calculate(
                                    query.startingIntersection,

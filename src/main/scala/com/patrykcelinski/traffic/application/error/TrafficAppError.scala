@@ -24,4 +24,5 @@ object InvalidInputError {
   case class NotExistingMeasurementsDataFilePath(
       notExistingMeasurementsDataFilePath: Path
   ) extends InvalidInputError
+  case object FileIsInWrongFormat extends InvalidInputError
 }

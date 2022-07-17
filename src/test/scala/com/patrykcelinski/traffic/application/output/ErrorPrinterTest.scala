@@ -25,7 +25,7 @@ class ErrorPrinterTest extends FlatTest {
     ErrorPrinter
       .print(InvalidInputError.InvalidIntersection(invalidIntersection))
 
-    printed.get shouldBe s"Invalid intersection: ${invalidIntersection}, should be in format \'{Avenue Char}{Street Integer}\' (regex: ^[A-Z]{1}\\d*$$) "
+    printed.get shouldBe s"ERROR. Invalid intersection: ${invalidIntersection}, should be in format \'{Avenue Char}{Street Integer}\' (regex: ^[A-Z]{1}\\d*$$) "
   }
 
   it should "print message to the console in case of InvalidInputError.InvalidMeasurementsDataFilePath" in {
@@ -45,7 +45,7 @@ class ErrorPrinterTest extends FlatTest {
         )
       )
 
-    printed.get shouldBe s"Invalid measurements file path: ${invalidMeasurementsDataFilePath}"
+    printed.get shouldBe s"ERROR. Invalid measurements file path: ${invalidMeasurementsDataFilePath}"
   }
 
   it should "print message to the console in case of InvalidInputError.NotExistingMeasurementsDataFilePath" in {
@@ -65,7 +65,7 @@ class ErrorPrinterTest extends FlatTest {
         )
       )
 
-    printed.get shouldBe s"Measurements data file does not exit: ${notExistingMeasurementsDataFilePath.toString}"
+    printed.get shouldBe s"ERROR. Measurements data file does not exit: ${notExistingMeasurementsDataFilePath.toString}"
   }
 
   it should "print message to the console in case of TrafficAppError.ThereIsNoPathBetween" in {
@@ -82,7 +82,7 @@ class ErrorPrinterTest extends FlatTest {
         TrafficAppError.ThereIsNoPathBetween(start, end)
       )
 
-    printed.get shouldBe s"There is no path connecting $start and $end"
+    printed.get shouldBe s"ERROR. There is no path connecting $start and $end"
   }
 
   it should "print message to the console in case of TrafficAppError.IntersectionDoesNotExit" in {
@@ -98,7 +98,7 @@ class ErrorPrinterTest extends FlatTest {
         TrafficAppError.IntersectionDoesNotExit(start)
       )
 
-    printed.get shouldBe s"Given intersection $start does not exist"
+    printed.get shouldBe s"ERROR. Given intersection $start does not exist"
   }
 
   def spyConsoleError[A](spy: String => Id[Unit]): Console[Id] =
@@ -106,10 +106,10 @@ class ErrorPrinterTest extends FlatTest {
       override def readLineWithCharset(charset: Charset): Id[String] = ???
       override def print[A](a: A)(implicit S: Show[A]): Id[Unit]     = ???
       override def println[A](a: A)(implicit S: Show[A]): Id[Unit]   = ???
-      override def error[A](a: A)(implicit S: Show[A]): Id[Unit]     = spy(
+      override def error[A](a: A)(implicit S: Show[A]): Id[Unit]     = ???
+      override def errorln[A](a: A)(implicit S: Show[A]): Id[Unit]   = spy(
         a.asInstanceOf[String]
       )
-      override def errorln[A](a: A)(implicit S: Show[A]): Id[Unit]   = ???
     }
 
 }

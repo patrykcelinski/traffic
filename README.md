@@ -62,3 +62,52 @@ The output of the program should be JSON. It should include:
 - the ending intersection
 - an array that contains the sequence of road segments to be traversed to get from the starting intersection to the ending intersection.
 - the total transit time based on the road segments in the route
+
+### Implementation
+
+To run program use SBT (Scala/Simple Build Tool).
+
+The program accepts 3 arguments:
+- path to the data file on local system. Data file should be in the format stated above in the task description
+- starting intersection in format "{Avenue}{Street}" e.g. "A1"
+- starting intersection in format "{Avenue}{Street}" e.g. "A2"
+
+Example use:
+
+```
+sbt "run /path/to/file/sample-data.json A1 A2"
+```
+
+Program returns data in the JSON format:
+
+```
+{
+  "startingIntersection" : "A1",
+  "endingIntersection" : "A2",
+  "path" : [
+    "A1",
+    "B1",
+    "C1",
+    "D1",
+    "E1",
+    "F1",
+    "F2",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "F5",
+    "E5",
+    "D5",
+    "C5",
+    "B5",
+    "A5",
+    "A4",
+    "A3",
+    "A2"
+  ],
+  "totalTransitTime" : 769.9560352603861
+}
+```
+
+It can also return error in plain string format in case if arguments or content of data file is invalid. 

@@ -17,11 +17,11 @@ object OptimalPathPrinter {
     Encoder.encodeString.contramap(
       _.value
     )
-  private implicit val totalTransitTime: Encoder[TotalCost]           =
+  private implicit val totalTransitTime: Encoder[TotalCost]              =
     Encoder.encodeDouble.contramap(
       _.value
     )
-  private implicit val optimalPathEncoder: Encoder[OptimalPath]       = deriveEncoder
+  private implicit val optimalPathEncoder: Encoder[OptimalPath]          = deriveEncoder
 
   def print[F[_]: Console](optimalPath: OptimalPath): F[Unit] =
     Console[F].println(optimalPath.asJson.toString())

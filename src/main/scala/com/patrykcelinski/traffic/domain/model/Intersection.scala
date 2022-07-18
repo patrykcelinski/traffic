@@ -3,6 +3,15 @@ import cats.implicits._
 
 case class Intersection(avenue: Avenue, street: Street) {
   override def toString: String = s"$avenue$street"
+
+  def distanceTo(other: Intersection): Double = {
+    val x1 = avenue.id.toInt - 'A'.toInt
+    val y1 = street.id
+    val x2 = other.avenue.id.toInt - 'A'.toInt
+    val y2 = other.street.id
+    math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+  }
+
 }
 
 object Intersection {

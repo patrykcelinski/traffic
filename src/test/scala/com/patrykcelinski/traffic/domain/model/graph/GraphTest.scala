@@ -1,6 +1,10 @@
 package com.patrykcelinski.traffic.domain.model.graph
 import cats.implicits._
-import com.patrykcelinski.traffic.domain.model.graph.cost.{HeuristicFunctionCost, PathCost, TotalCost}
+import com.patrykcelinski.traffic.domain.model.graph.cost.{
+  HeuristicFunctionCost,
+  PathCost,
+  TotalCost
+}
 import com.patrykcelinski.traffic.testutils.FlatTest
 
 class GraphTest extends FlatTest {
@@ -304,7 +308,7 @@ class GraphTest extends FlatTest {
     val edgeL_I = Edge("L", "I", PathCost(4.0))
     val edgeL_J = Edge("L", "J", PathCost(6.0))
 
-    val exampleGraph = new Graph[String](
+    val exampleGraph      = new Graph[String](
       Map(
         "S" -> Set(
           edgeS_A,
@@ -350,7 +354,7 @@ class GraphTest extends FlatTest {
         )
       )
     )
-    val heuristics = Map(
+    val heuristics        = Map(
       "S" -> 10.0,
       "A" -> 9.0,
       "B" -> 7.0,
@@ -362,7 +366,206 @@ class GraphTest extends FlatTest {
       "H" -> 6.0,
       "I" -> 4.0,
       "J" -> 4.0,
-      "K" -> 3.0
+      "K" -> 3.0,
+      "L" -> 6.0
+    )
+    val heuristicFunction =
+      (x: String, _: String) => HeuristicFunctionCost(heuristics(x))
+    exampleGraph.findPath("S", "E", heuristicFunction) shouldBe Path(
+      totalCost = TotalCost(2 + 1 + 2 + 2),
+      path = List("S", "B", "H", "G", "E")
+    ).asRight
+  }
+
+  it should "return path for an example graph modified - try to lure algorithm in the trap S -> C -> L" in {
+    val edgeS_A = Edge("S", "A", PathCost(7.0))
+    val edgeS_B = Edge("S", "B", PathCost(2.0))
+    val edgeS_C = Edge("S", "C", PathCost(1.0)) // modified
+
+    val edgeA_B = Edge("A", "B", PathCost(3.0))
+    val edgeA_D = Edge("A", "D", PathCost(4.0))
+
+    val edgeB_D = Edge("B", "D", PathCost(4.0))
+    val edgeB_H = Edge("B", "H", PathCost(1.0))
+
+    val edgeC_L = Edge("C", "L", PathCost(1.0)) // modified
+
+    val edgeD_F = Edge("D", "F", PathCost(5.0))
+
+    val edgeF_H = Edge("F", "H", PathCost(3.0))
+
+    val edgeG_E = Edge("G", "E", PathCost(2.0))
+
+    val edgeH_G = Edge("H", "G", PathCost(2.0))
+
+    val edgeI_K = Edge("I", "K", PathCost(4.0))
+
+    val edgeJ_K = Edge("I", "K", PathCost(4.0))
+
+    val edgeK_E = Edge("K", "E", PathCost(5.0))
+
+    val edgeL_I = Edge("L", "I", PathCost(4.0))
+    val edgeL_J = Edge("L", "J", PathCost(6.0))
+
+    val exampleGraph      = new Graph[String](
+      Map(
+        "S" -> Set(
+          edgeS_A,
+          edgeS_B,
+          edgeS_C
+        ),
+        "A" -> Set(
+          edgeA_B,
+          edgeA_D
+        ),
+        "B" -> Set(
+          edgeB_D,
+          edgeB_H
+        ),
+        "C" -> Set(
+          edgeC_L
+        ),
+        "D" -> Set(
+          edgeD_F
+        ),
+        "E" -> Set.empty,
+        "F" -> Set(
+          edgeF_H
+        ),
+        "G" -> Set(
+          edgeG_E
+        ),
+        "H" -> Set(
+          edgeH_G
+        ),
+        "I" -> Set(
+          edgeI_K
+        ),
+        "J" -> Set(
+          edgeJ_K
+        ),
+        "K" -> Set(
+          edgeK_E
+        ),
+        "L" -> Set(
+          edgeL_I,
+          edgeL_J
+        )
+      )
+    )
+    val heuristics        = Map(
+      "S" -> 10.0,
+      "A" -> 9.0,
+      "B" -> 7.0,
+      "C" -> 8.0,
+      "D" -> 9.0,
+      "E" -> 0.0,
+      "F" -> 6.0,
+      "G" -> 3.0,
+      "H" -> 6.0,
+      "I" -> 4.0,
+      "J" -> 4.0,
+      "K" -> 3.0,
+      "L" -> 6.0
+    )
+    val heuristicFunction =
+      (x: String, _: String) => HeuristicFunctionCost(heuristics(x))
+    exampleGraph.findPath("S", "E", heuristicFunction) shouldBe Path(
+      totalCost = TotalCost(2 + 1 + 2 + 2),
+      path = List("S", "B", "H", "G", "E")
+    ).asRight
+  }
+
+  it should "return path for an example graph modified - try to lure algorithm in the trap S -> C -> L, bad heuristic cost for C" in {
+    val edgeS_A = Edge("S", "A", PathCost(7.0))
+    val edgeS_B = Edge("S", "B", PathCost(2.0))
+    val edgeS_C = Edge("S", "C", PathCost(1.0)) // modified
+
+    val edgeA_B = Edge("A", "B", PathCost(3.0))
+    val edgeA_D = Edge("A", "D", PathCost(4.0))
+
+    val edgeB_D = Edge("B", "D", PathCost(4.0))
+    val edgeB_H = Edge("B", "H", PathCost(1.0))
+
+    val edgeC_L = Edge("C", "L", PathCost(1.0)) // modified
+
+    val edgeD_F = Edge("D", "F", PathCost(5.0))
+
+    val edgeF_H = Edge("F", "H", PathCost(3.0))
+
+    val edgeG_E = Edge("G", "E", PathCost(2.0))
+
+    val edgeH_G = Edge("H", "G", PathCost(2.0))
+
+    val edgeI_K = Edge("I", "K", PathCost(4.0))
+
+    val edgeJ_K = Edge("I", "K", PathCost(4.0))
+
+    val edgeK_E = Edge("K", "E", PathCost(5.0))
+
+    val edgeL_I = Edge("L", "I", PathCost(4.0))
+    val edgeL_J = Edge("L", "J", PathCost(6.0))
+
+    val exampleGraph      = new Graph[String](
+      Map(
+        "S" -> Set(
+          edgeS_A,
+          edgeS_B,
+          edgeS_C
+        ),
+        "A" -> Set(
+          edgeA_B,
+          edgeA_D
+        ),
+        "B" -> Set(
+          edgeB_D,
+          edgeB_H
+        ),
+        "C" -> Set(
+          edgeC_L
+        ),
+        "D" -> Set(
+          edgeD_F
+        ),
+        "E" -> Set.empty,
+        "F" -> Set(
+          edgeF_H
+        ),
+        "G" -> Set(
+          edgeG_E
+        ),
+        "H" -> Set(
+          edgeH_G
+        ),
+        "I" -> Set(
+          edgeI_K
+        ),
+        "J" -> Set(
+          edgeJ_K
+        ),
+        "K" -> Set(
+          edgeK_E
+        ),
+        "L" -> Set(
+          edgeL_I,
+          edgeL_J
+        )
+      )
+    )
+    val heuristics        = Map(
+      "S" -> 10.0,
+      "A" -> 9.0,
+      "B" -> 7.0,
+      "C" -> 6.0, // modified
+      "D" -> 9.0,
+      "E" -> 0.0,
+      "F" -> 6.0,
+      "G" -> 3.0,
+      "H" -> 6.0,
+      "I" -> 4.0,
+      "J" -> 4.0,
+      "K" -> 3.0,
+      "L" -> 6.0
     )
     val heuristicFunction =
       (x: String, _: String) => HeuristicFunctionCost(heuristics(x))

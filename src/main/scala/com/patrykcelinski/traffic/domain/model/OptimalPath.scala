@@ -1,6 +1,10 @@
 package com.patrykcelinski.traffic.domain.model
 
-import com.patrykcelinski.traffic.domain.model.graph.cost.{PathCost, TotalCost}
+import com.patrykcelinski.traffic.domain.model.graph.cost.{
+  HeuristicFunctionCost,
+  PathCost,
+  TotalCost
+}
 import com.patrykcelinski.traffic.domain.model.graph.{
   Edge,
   Graph,
@@ -45,8 +49,12 @@ object OptimalPath {
           (key, edges.toSet)
         }
 
+    val heuristicFunction
+        : (Intersection, Intersection) => HeuristicFunctionCost =
+      (from, to) => HeuristicFunctionCost(from.distanceTo(to))
+
     new Graph(graphMap)
-      .findPath(startingIntersection, endingIntersection)
+      .findPath(startingIntersection, endingIntersection, heuristicFunction)
       .map { optimalPath =>
         OptimalPath(
           startingIntersection,

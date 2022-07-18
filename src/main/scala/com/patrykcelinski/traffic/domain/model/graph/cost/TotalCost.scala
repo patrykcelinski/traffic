@@ -1,7 +1,7 @@
 package com.patrykcelinski.traffic.domain.model.graph.cost
 
 case class TotalCost(value: Double) extends AnyVal {
-  def add(pathCost: PathCost): TotalCost                           =
+  def add(pathCost: PathCost): TotalCost                         =
     TotalCost(value + pathCost.value)
   def +(heuristicFunctionCost: HeuristicFunctionCost): TotalCost =
     TotalCost(value + heuristicFunctionCost.value)
@@ -9,5 +9,5 @@ case class TotalCost(value: Double) extends AnyVal {
 }
 
 object TotalCost {
-  val ZERO                                         = TotalCost(0.0)
+  val ZERO = TotalCost(0.0)
 }

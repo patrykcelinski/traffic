@@ -6,7 +6,6 @@ import io.circe.generic.semiauto._
 import io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
 object MeasurementsCodecs {
 
-
   implicit val avenueDecoder: Decoder[Avenue] = Decoder.decodeChar.map(
     Avenue.apply
   )

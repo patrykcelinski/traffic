@@ -7,6 +7,7 @@ import com.patrykcelinski.traffic.domain.model.graph.cost.{
 }
 
 import scala.annotation.tailrec
+import scala.collection.mutable
 
 // DirectedEdgeWeightedGraph
 class Graph[T](graph: Map[T, Set[Edge[T]]]) {
@@ -44,39 +45,47 @@ class Graph[T](graph: Map[T, Set[Edge[T]]]) {
     }
 
     @tailrec
-    def findPathTailrec(open: List[Node], closedSet: Set[Node]): Path[T] =
-      open match {
-        case currentNode :: _ if currentNode.key == end =>
-          retracePath(currentNode, closedSet)
-        case currentNode :: restOfOpenNodes             =>
-          val neighbours =
-            graph(currentNode.key)
-              .filter(edge => !closedSet.exists(n => n.key == edge.to))
-              .map(edge =>
-                Node(
-                  edge.to,
-                  currentNode.totalCostSoFar.add(edge.cost),
-                  edge.from.some
-                )
+    def findPathTailrec(
+        open: mutable.PriorityQueue[Node],
+        closedSet: Set[Node]
+    ): Path[T] = {
+      val currentNode = open.dequeue()
+      if (currentNode.key == end)
+        retracePath(currentNode, closedSet)
+      else {
+        val neighbours =
+          graph(currentNode.key)
+            .filter(edge => !closedSet.exists(n => n.key == edge.to))
+            .map(edge =>
+              Node(
+                edge.to,
+                currentNode.totalCostSoFar.add(edge.cost),
+                edge.from.some
               )
-              .toList
-          val newOpen    =
-            (neighbours ++ restOfOpenNodes)
-              .sortWith { case (x1, x2) =>
-                val costEdge1 =
-                  x1.totalCostSoFar + heuristicFunction(x1.key, end)
-                val costEdge2 =
-                  x2.totalCostSoFar + heuristicFunction(x2.key, end)
-                costEdge1 < costEdge2
-              }
+            )
+            .toList
+        val newOpen    = open.addAll(neighbours)
 
-          val newClosed = closedSet + currentNode
+        val newClosed = closedSet + currentNode
 
-          findPathTailrec(
-            newOpen,
-            newClosed
-          )
+        findPathTailrec(
+          newOpen,
+          newClosed
+        )
       }
+    }
+
+    case object NodeOrdering extends Ordering[Node] {
+      override def compare(x: Node, y: Node): Int = {
+        val costEdge1 =
+          x.totalCostSoFar + heuristicFunction(x.key, end)
+        val costEdge2 =
+          y.totalCostSoFar + heuristicFunction(y.key, end)
+        if (costEdge1 < costEdge2) 1 else -1
+      }
+    }
+
+    implicit val ordering: Ordering[Node] = NodeOrdering
 
     if (!graph.contains(start))
       PathfindingError.NotExistingStartingNode.asLeft
@@ -84,7 +93,7 @@ class Graph[T](graph: Map[T, Set[Edge[T]]]) {
       PathfindingError.NotExistingEndingNode.asLeft
     else if (this.inDegree(end) >= 1)
       findPathTailrec(
-        List(Node(start, TotalCost.ZERO, None)),
+        mutable.PriorityQueue.from(List(Node(start, TotalCost.ZERO, None))),
         Set.empty
       ).asRight
     else
